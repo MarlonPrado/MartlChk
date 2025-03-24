@@ -6,154 +6,21 @@
     <title>Martlet CHK</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-        body { 
-            background-color: #0d1117; 
-            color: #ffffff; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-        }
-        .card { 
-            background-color: #161b22; 
-            border-color: #30363d; 
-            color: #ffffff; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3); 
-            border-radius: 8px; 
-        }
-        .card-header { 
-            background-color: #21262d; 
-            border-color: #30363d; 
-            padding: 1rem; 
-            border-radius: 8px 8px 0 0; 
-        }
-        .form-control, .form-select { 
-            background-color: #21262d; 
-            border-color: #30363d; 
-            color: #ffffff; 
-            border-radius: 6px; 
-        }
-        .form-control:focus, .form-select:focus { 
-            background-color: #21262d; 
-            color: #ffffff; 
-            border-color: #58a6ff; 
-            box-shadow: 0 0 0 0.25rem rgba(88, 166, 255, 0.25); 
-        }
-        .btn-primary { 
-            background-color: #238636; 
-            border-color: #2ea043; 
-            color: #ffffff; 
-            border-radius: 6px; 
-        }
-        .btn-primary:hover { 
-            background-color: #2ea043; 
-            border-color: #238636; 
-        }
-        .btn-secondary { 
-            background-color: #30363d; 
-            border-color: #484f58; 
-            color: #ffffff; 
-            border-radius: 6px; 
-        }
-        .btn-outline-primary, .btn-outline-info, .btn-outline-danger, .btn-outline-dark { 
-            color: #ffffff; 
-            border-radius: 6px; 
-        }
-        .table { 
-            color: #ffffff; 
-        }
-        .table-striped>tbody>tr:nth-of-type(odd) { 
-            background-color: rgba(255, 255, 255, 0.05); 
-        }
-        .scrollable-table { 
-            max-height: 300px; 
-            overflow-y: auto; 
-            scrollbar-width: thin; 
-            scrollbar-color: #30363d #161b22; 
-        }
-        .scrollable-table::-webkit-scrollbar { 
-            width: 8px; 
-        }
-        .scrollable-table::-webkit-scrollbar-track { 
-            background: #161b22; 
-        }
-        .scrollable-table::-webkit-scrollbar-thumb { 
-            background-color: #30363d; 
-            border-radius: 4px; 
-        }
-        .nav-tabs .nav-link { 
-            color: #8b949e; 
-            border-radius: 6px 6px 0 0; 
-        }
-        .nav-tabs .nav-link.active { 
-            background-color: #161b22; 
-            color: #58a6ff; 
-            border-color: #30363d #30363d #161b22; 
-        }
-        .bg-dark-stats { 
-            background-color: #21262d; 
-            color: #ffffff; 
-        }
-        .bg-success-stats { 
-            background-color: #238636; 
-            color: #ffffff; 
-        }
-        .bg-danger-stats { 
-            background-color: #da3633; 
-            color: #ffffff; 
-        }
-        .bg-warning-stats { 
-            background-color: #f0883e; 
-            color: #ffffff; 
-        }
-        .progress { 
-            background-color: #21262d; 
-            border-radius: 6px; 
-        }
-        .progress-bar { 
-            background-color: #58a6ff; 
-            border-radius: 6px; 
-        }
-        .label { 
-            color: #ffffff; 
-        }
-        .spinner-border { 
-            color: #58a6ff; 
-        }
-        .badge { 
-            font-size: 0.875em; 
-            border-radius: 4px; 
-        }
-        .result-card { 
-            background-color: #21262d; 
-            border: 1px solid #30363d; 
-            border-radius: 6px; 
-            padding: 1rem; 
-            margin-bottom: 1rem; 
-        }
-        .result-card.approved { 
-            border-left: 4px solid #238636; 
-        }
-        .result-card.declined { 
-            border-left: 4px solid #da3633; 
-        }
-        .result-card.error { 
-            border-left: 4px solid #f0883e; 
-        }
-    </style>
 </head>
-<body>
+<body class="bg-dark text-light">
     <div class="container-fluid py-3">
         <div class="row">
             <!-- Panel de Control -->
             <div class="col-lg-4">
-                <div class="card mb-3">
-                    <div class="card-header">
+                <div class="card bg-dark border-secondary mb-3">
+                    <div class="card-header bg-secondary text-white">
                         <h5 class="mb-0">Panel de Control</h5>
                     </div>
                     <div class="card-body">
                         <form id="checkForm">
                             <!-- Modo de operación -->
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Modo de Operación</label>
+                                <label class="form-label fw-bold text-light">Modo de Operación</label>
                                 <div class="d-flex flex-wrap gap-2">
                                     <input type="radio" class="btn-check" name="opMode" id="mode1" value="1" checked>
                                     <label class="btn btn-outline-primary" for="mode1">Normal</label>
@@ -171,34 +38,35 @@
 
                             <!-- Cookies -->
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Cookie 1 (Requerida)</label>
-                                <input type="text" class="form-control" id="cookie1" placeholder="Ingrese cookie 1">
+                                <label class="form-label fw-bold text-light">Cookie 1 (Requerida)</label>
+                                <input type="text" class="form-control bg-dark text-light border-secondary" id="cookie1" placeholder="Ingrese cookie 1">
                             </div>
 
                             <div class="mb-3 cookie-field" data-min-mode="2">
-                                <label class="form-label fw-bold">Cookie 2 (Modo Medio+)</label>
-                                <input type="text" class="form-control" id="cookie2" placeholder="Ingrese cookie 2">
+                                <label class="form-label fw-bold text-light">Cookie 2 (Modo Medio+)</label>
+                                <input type="text" class="form-control bg-dark text-light border-secondary" id="cookie2" placeholder="Ingrese cookie 2">
                             </div>
 
                             <div class="mb-3 cookie-field" data-min-mode="3">
-                                <label class="form-label fw-bold">Cookie 3 (Modo Diablo/Flash)</label>
-                                <input type="text" class="form-control" id="cookie3" placeholder="Ingrese cookie 3">
+                                <label class="form-label fw-bold text-light">Cookie 3 (Modo Diablo/Flash)</label>
+                                <input type="text" class="form-control bg-dark text-light border-secondary" id="cookie3" placeholder="Ingrese cookie 3">
                             </div>
 
                             <div class="mb-3 cookie-field" data-min-mode="3">
-                                <label class="form-label fw-bold">Cookie 4 (Modo Diablo/Flash)</label>
-                                <input type="text" class="form-control" id="cookie4" placeholder="Ingrese cookie 4">
+                                <label class="form-label fw-bold text-light">Cookie 4 (Modo Diablo/Flash)</label>
+                                <input type="text" class="form-control bg-dark text-light border-secondary" id="cookie4" placeholder="Ingrese cookie 4">
                             </div>
 
                             <!-- Tarjetas -->
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Tarjetas (1 por línea)</label>
-                                <textarea class="form-control" id="cardList" rows="5" placeholder="Ingrese tarjetas, una por línea"></textarea>
+                                <label class="form-label fw-bold text-light">Tarjetas (1 por línea)</label>
+                                <textarea class="form-control bg-dark text-light border-secondary" id="cardList" rows="5" placeholder="Ingrese tarjetas, una por línea"></textarea>
+                                <div class="form-text text-light" id="cardCount">0 tarjetas ingresadas (0 únicas)</div>
                             </div>
 
                             <!-- Botones -->
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary" id="checkBtn">
+                                <button type="submit" class="btn btn-success" id="checkBtn">
                                     <i class="bi bi-credit-card"></i> Verificar Tarjetas
                                 </button>
                                 <button type="button" class="btn btn-secondary" id="clearBtn">
@@ -213,14 +81,14 @@
             <!-- Resultados -->
             <div class="col-lg-8">
                 <!-- Estadísticas -->
-                <div class="card mb-3">
-                    <div class="card-header">
+                <div class="card bg-dark border-secondary mb-3">
+                    <div class="card-header bg-secondary text-white">
                         <h5 class="mb-0">Estadísticas</h5>
                     </div>
                     <div class="card-body">
                         <div class="row text-center">
                             <div class="col-6 col-md-3">
-                                <div class="card bg-dark-stats mb-2">
+                                <div class="card bg-secondary text-white mb-2">
                                     <div class="card-body py-2">
                                         <h5 class="card-title mb-0">Total</h5>
                                         <p class="display-6 mb-0" id="statsTotal">0</p>
@@ -228,7 +96,7 @@
                                 </div>
                             </div>
                             <div class="col-6 col-md-3">
-                                <div class="card bg-success-stats mb-2">
+                                <div class="card bg-success text-white mb-2">
                                     <div class="card-body py-2">
                                         <h5 class="card-title mb-0">Aprovadas</h5>
                                         <p class="display-6 mb-0" id="statsApproved">0</p>
@@ -236,7 +104,7 @@
                                 </div>
                             </div>
                             <div class="col-6 col-md-3">
-                                <div class="card bg-danger-stats mb-2">
+                                <div class="card bg-danger text-white mb-2">
                                     <div class="card-body py-2">
                                         <h5 class="card-title mb-0">Reprovadas</h5>
                                         <p class="display-6 mb-0" id="statsDenied">0</p>
@@ -244,10 +112,11 @@
                                 </div>
                             </div>
                             <div class="col-6 col-md-3">
-                                <div class="card bg-warning-stats mb-2">
+                                <div class="card bg-warning text-dark mb-2">
                                     <div class="card-body py-2">
                                         <h5 class="card-title mb-0">Errores</h5>
                                         <p class="display-6 mb-0" id="statsErrors">0</p>
+                                        <small id="cookieErrorsCount" class="text-dark"></small>
                                     </div>
                                 </div>
                             </div>
@@ -256,65 +125,78 @@
                 </div>
 
                 <!-- Estado de proceso -->
-                <div class="card mb-3" id="processingCard" style="display: none;">
+                <div class="card bg-dark border-secondary mb-3" id="processingCard" style="display: none;">
                     <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="spinner-border text-primary me-3" role="status"></div>
-                            <div class="flex-grow-1">
-                                <h5 class="mb-1">Verificando tarjetas</h5>
-                                <div class="progress" style="height: 5px;">
-                                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                                         id="processProgress" style="width: 0%"></div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <div class="spinner-border text-primary me-3" role="status"></div>
+                                <div class="flex-grow-1">
+                                    <h5 class="mb-1">Verificando tarjetas</h5>
+                                    <div class="progress" style="height: 5px;">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                             id="processProgress" style="width: 0%"></div>
+                                    </div>
                                 </div>
                             </div>
+                            <button type="button" class="btn btn-danger ms-3" id="stopBtn">
+                                <i class="bi bi-stop-circle"></i> Detener
+                            </button>
                         </div>
                     </div>
                 </div>
 
+                <!-- Alerta de cookie error -->
+                <div class="alert alert-warning alert-dismissible fade show" role="alert" id="cookieErrorAlert" style="display: none;">
+                    <strong><i class="bi bi-exclamation-triangle"></i> Error de cookie detectado!</strong>
+                    <span id="cookieErrorMessage">Una o más cookies pueden estar inválidas.</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
                 <!-- Tabs para resultados -->
-                <div class="card">
-                    <div class="card-header">
+                <div class="card bg-dark border-secondary">
+                    <div class="card-header bg-dark border-secondary d-flex align-items-center">
                         <ul class="nav nav-tabs card-header-tabs" id="resultsTabs">
                             <li class="nav-item">
-                                <a class="nav-link active" data-bs-toggle="tab" href="#approved">
-                                    <i class="bi bi-check-circle text-success"></i> Aprovadas
+                                <a class="nav-link active bg-dark text-success" data-bs-toggle="tab" href="#approved">
+                                    <i class="bi bi-check-circle"></i> Aprovadas
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#declined">
-                                    <i class="bi bi-x-circle text-danger"></i> Reprovadas
+                                <a class="nav-link bg-dark text-danger" data-bs-toggle="tab" href="#declined">
+                                    <i class="bi bi-x-circle"></i> Reprovadas
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#errors">
-                                    <i class="bi bi-exclamation-triangle text-warning"></i> Errores
+                                <a class="nav-link bg-dark text-warning" data-bs-toggle="tab" href="#errors">
+                                    <i class="bi bi-exclamation-triangle"></i> Errores
                                 </a>
                             </li>
                         </ul>
-                        <!-- Botón para descargar tarjetas aprobadas -->
-                        <button type="button" class="btn btn-success btn-sm ms-auto" id="downloadApprovedBtn">
-                            <i class="bi bi-download"></i> Descargar Aprovadas
-                        </button>
+                        <div class="ms-auto">
+                            <button type="button" class="btn btn-sm btn-success" id="downloadApprovedBtn">
+                                <i class="bi bi-download"></i> Descargar Aprovadas
+                            </button>
+                        </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body bg-dark">
                         <div class="tab-content">
                             <!-- Tarjetas Aprovadas -->
                             <div class="tab-pane fade show active" id="approved">
-                                <div class="scrollable-table">
+                                <div class="overflow-auto" style="max-height: 400px;">
                                     <div id="approvedResults"></div>
                                 </div>
                             </div>
                             
                             <!-- Tarjetas Reprovadas -->
                             <div class="tab-pane fade" id="declined">
-                                <div class="scrollable-table">
+                                <div class="overflow-auto" style="max-height: 400px;">
                                     <div id="declinedResults"></div>
                                 </div>
                             </div>
                             
                             <!-- Errores -->
                             <div class="tab-pane fade" id="errors">
-                                <div class="scrollable-table">
+                                <div class="overflow-auto" style="max-height: 400px;">
                                     <div id="errorsResults"></div>
                                 </div>
                             </div>
@@ -332,6 +214,7 @@
     <script>
         $(document).ready(function() {
             let eventSource, currentSessionId;
+            let cookieErrorCount = 0;
             
             // Configurar cambio de modo y mostrar/ocultar campos
             $('input[name="opMode"]').change(function() {
@@ -340,24 +223,41 @@
                     $(this).toggle(mode >= parseInt($(this).data('min-mode')));
                 });
             }).trigger('change');
+            
+            // Conteo de tarjetas
+            $('#cardList').on('input', function() {
+                const allCards = $(this).val().trim().split('\n').filter(card => card.trim());
+                const uniqueCards = [...new Set(allCards)];
+                $('#cardCount').text(`${allCards.length} tarjetas ingresadas (${uniqueCards.length} únicas)`);
+            });
 
             // Limpiar formulario y resultados
             $('#clearBtn').click(function() {
                 $('#cardList').val('');
+                $('#cardCount').text('0 tarjetas ingresadas (0 únicas)');
                 clearResults();
             });
 
             function clearResults() {
                 $('#approvedResults, #declinedResults, #errorsResults').empty();
-                updateStats(0, 0, 0);
+                updateStats(0, 0, 0, 0);
                 $('#processProgress').css('width', '0%');
+                cookieErrorCount = 0;
+                $('#cookieErrorsCount').text('');
+                $('#cookieErrorAlert').hide();
             }
 
-            function updateStats(approved, declined, errors) {
+            function updateStats(approved, declined, errors, cookieErrors) {
                 $('#statsTotal').text(approved + declined + errors);
                 $('#statsApproved').text(approved);
                 $('#statsDenied').text(declined);
                 $('#statsErrors').text(errors);
+                
+                if (cookieErrors > 0) {
+                    $('#cookieErrorsCount').text(`(${cookieErrors} de cookie)`);
+                } else {
+                    $('#cookieErrorsCount').text('');
+                }
             }
 
             function setupEventSource() {
@@ -372,15 +272,32 @@
                         if (!currentSessionId || data.sessionId === currentSessionId) {
                             if (data.type === 'result') {
                                 addResult(data.data);
-                                updateStats(data.stats.aprovadas, data.stats.reprovadas, data.stats.errors);
+                                updateStats(
+                                    data.stats.aprovadas, 
+                                    data.stats.reprovadas, 
+                                    data.stats.errors,
+                                    data.stats.cookieErrors || 0
+                                );
                                 if (data.progress) $('#processProgress').css('width', data.progress + '%');
                                 highlightTab(data.data.status);
                             } else if (data.type === 'complete') {
                                 $('#processingCard').hide();
-                                updateStats(data.stats.aprovadas, data.stats.reprovadas, data.stats.errors);
+                                updateStats(
+                                    data.stats.aprovadas, 
+                                    data.stats.reprovadas, 
+                                    data.stats.errors,
+                                    data.stats.cookieErrors || 0
+                                );
+                                alert('¡Procesamiento completado!');
                             } else if (data.type === 'error') {
                                 alert('Error: ' + data.message);
                                 $('#processingCard').hide();
+                            } else if (data.type === 'cookie-error') {
+                                cookieErrorCount++;
+                                showCookieErrorAlert(data.data);
+                            } else if (data.type === 'stopped') {
+                                $('#processingCard').hide();
+                                alert('Procesamiento detenido por el usuario');
                             }
                         }
                     } catch (e) {
@@ -389,23 +306,48 @@
                 };
                 
                 eventSource.onerror = function() {
+                    console.log('Error en SSE, reconectando en 5 segundos...');
                     setTimeout(setupEventSource, 5000);
                 };
             }
             
+            function showCookieErrorAlert(data) {
+                let cookieNum = data ? `Cookie ${data.cookieUsed}` : 'Una cookie';
+                $('#cookieErrorMessage').text(`${cookieNum} parece estar inválida o expirada.`);
+                $('#cookieErrorAlert').show();
+            }
+            
             function addResult(result) {
-                const backupBadge = result.wasBackup ? '<span class="badge bg-warning ms-1">Respaldo</span>' : '';
-                const cardClass = result.status === 'aprovada' ? 'approved' : result.status === 'reprovada' ? 'declined' : 'error';
+                const backupBadge = result.wasBackup ? 
+                    '<span class="badge bg-warning ms-1">Respaldo</span>' : '';
+                
+                let statusBadge, bgClass;
+                if (result.status === 'aprovada') {
+                    statusBadge = '<span class="badge bg-success">APROBADA</span>';
+                    bgClass = 'border-success';
+                } else if (result.status === 'reprovada') {
+                    statusBadge = '<span class="badge bg-danger">RECHAZADA</span>';
+                    bgClass = 'border-danger';
+                } else if (result.status === 'cookie-error') {
+                    statusBadge = '<span class="badge bg-warning">ERROR COOKIE</span>';
+                    bgClass = 'border-warning';
+                } else {
+                    statusBadge = '<span class="badge bg-warning">ERROR</span>';
+                    bgClass = 'border-warning';
+                }
+                
                 const card = `
-                    <div class="result-card ${cardClass}">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-1">${result.card}</h6>
-                                <p class="mb-0">${result.message}</p>
+                    <div class="card bg-dark ${bgClass} mb-2">
+                        <div class="card-body py-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">${result.card}</h6>
+                                <div>
+                                    ${statusBadge}
+                                    <span class="badge bg-secondary ms-1">Cookie ${result.cookieUsed}</span>
+                                    ${backupBadge}
+                                </div>
                             </div>
-                            <div>
-                                <small class="text-muted">Cookie ${result.cookieUsed} ${backupBadge}</small>
-                            </div>
+                            <p class="mb-0 text-light-emphasis small">${result.message}</p>
                         </div>
                     </div>
                 `;
@@ -436,21 +378,26 @@
                 
                 const tab = $(tabMap[status]);
                 if (!$(`#${status === 'aprovada' ? 'approved' : status === 'reprovada' ? 'declined' : 'errors'}`).hasClass('show')) {
-                    tab.addClass(`${classMap[status]} fw-bold`);
+                    tab.addClass('fw-bold');
+                    tab.find('i').addClass('pulsate');
                 }
             }
             
             $('#resultsTabs a').on('shown.bs.tab', function() {
-                $(this).removeClass('text-success text-danger text-warning fw-bold');
+                $(this).removeClass('fw-bold');
+                $(this).find('i').removeClass('pulsate');
             });
 
             // Descargar tarjetas aprobadas
             $('#downloadApprovedBtn').click(function() {
-                const approvedCards = $('#approvedResults .result-card').map(function() {
-                    return $(this).find('h6').text();
+                const approvedCards = $('#approvedResults .card h6').map(function() {
+                    return $(this).text().trim();
                 }).get().join('\n');
 
-                if (!approvedCards) return alert('No hay tarjetas aprobadas para descargar');
+                if (!approvedCards) {
+                    alert('No hay tarjetas aprobadas para descargar');
+                    return;
+                }
 
                 const blob = new Blob([approvedCards], { type: 'text/plain' });
                 const url = URL.createObjectURL(blob);
@@ -462,17 +409,58 @@
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
             });
+            
+            // Detener procesamiento
+            $('#stopBtn').click(function() {
+                if (!currentSessionId) return;
+                
+                $.ajax({
+                    url: '/stop',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ sessionId: currentSessionId }),
+                    success: function(response) {
+                        console.log('Procesamiento detenido:', response);
+                    },
+                    error: function(xhr) {
+                        console.error('Error al detener procesamiento:', xhr.responseJSON?.error);
+                    }
+                });
+            });
 
             $('#checkForm').submit(function(e) {
                 e.preventDefault();
                 
                 const cards = $('#cardList').val().trim().split('\n').filter(card => card.trim());
-                if (!cards.length) return alert('Ingrese al menos una tarjeta para verificar');
+                if (!cards.length) {
+                    alert('Ingrese al menos una tarjeta para verificar');
+                    return;
+                }
 
                 const cookie1 = $('#cookie1').val().trim();
-                if (!cookie1) return alert('La Cookie 1 es obligatoria');
+                if (!cookie1) {
+                    alert('La Cookie 1 es obligatoria');
+                    return;
+                }
 
                 const mode = parseInt($('input[name="opMode"]:checked').val());
+                
+                // Validaciones adicionales según el modo
+                if (mode >= 2 && !$('#cookie2').val().trim()) {
+                    alert('La Cookie 2 es requerida para el modo seleccionado');
+                    return;
+                }
+                
+                if (mode >= 3) {
+                    if (!$('#cookie3').val().trim()) {
+                        alert('La Cookie 3 es requerida para el modo Diablo/Flash');
+                        return;
+                    }
+                    if (!$('#cookie4').val().trim()) {
+                        alert('La Cookie 4 es requerida para el modo Diablo/Flash');
+                        return;
+                    }
+                }
                 
                 clearResults();
                 $('#processingCard').show();
@@ -491,6 +479,7 @@
                     }),
                     success: function(response) {
                         currentSessionId = response.sessionId;
+                        console.log('Procesamiento iniciado, ID de sesión:', currentSessionId);
                     },
                     error: function(xhr) {
                         alert('Error: ' + (xhr.responseJSON?.error || 'No se pudo procesar la solicitud'));
@@ -502,5 +491,16 @@
             setupEventSource();
         });
     </script>
+    
+    <style>
+        .pulsate {
+            animation: pulsate 1.5s infinite;
+        }
+        @keyframes pulsate {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
 </body>
 </html>
