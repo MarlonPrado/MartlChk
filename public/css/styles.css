@@ -1,0 +1,120 @@
+/* public/css/style.css */
+:root {
+    --cyber-blue: #00f3ff;
+    --cyber-dark: #0a0a0a;
+    --cyber-border: 1px solid var(--cyber-blue);
+}
+
+body {
+    background-color: var(--cyber-dark);
+    color: #ffffff;
+    font-family: 'Courier New', monospace;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: var(--cyber-border);
+    padding-bottom: 15px;
+}
+
+.neon-logo {
+    color: var(--cyber-blue);
+    font-size: 2.5rem;
+    text-shadow: 0 0 10px var(--cyber-blue);
+}
+
+.main-title {
+    color: var(--cyber-blue);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.cyber-input {
+    background-color: #000000 !important;
+    color: var(--cyber-blue) !important;
+    border: var(--cyber-border) !important;
+    border-radius: 0 !important;
+    padding: 15px !important;
+    transition: all 0.3s;
+}
+
+.cyber-input:focus {
+    box-shadow: 0 0 15px var(--cyber-blue) !important;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-cyber {
+    background: #000000 !important;
+    border: var(--cyber-border) !important;
+    color: var(--cyber-blue) !important;
+    padding: 12px 25px !important;
+    transition: all 0.3s !important;
+}
+
+.btn-cyber:hover {
+    background: var(--cyber-blue) !important;
+    color: #000 !important;
+    box-shadow: 0 0 15px var(--cyber-blue);
+}
+
+.cyber-panel {
+    background: #000000;
+    border: var(--cyber-border);
+    padding: 20px;
+    min-height: 400px;
+}
+
+.results-container {
+    background: #000;
+    padding: 10px;
+    margin-top: 15px;
+    height: 300px;
+    overflow-y: auto;
+}
+
+.cyber-footer {
+    margin-top: 40px;
+    border-top: var(--cyber-border);
+    padding: 20px 0;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--cyber-blue);
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    background: #0f0;
+    border-radius: 50%;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.2; }
+    50% { opacity: 1; }
+    100% { opacity: 0.2; }
+}
+
+/* Estilos específicos para resultados */
+.result-item {
+    padding: 8px;
+    margin: 5px 0;
+    background: #001219;
+    border: 1px solid #013a4b;
+    font-family: 'Courier New', monospace;
+}
+
+.approved .result-item { border-left: 4px solid #28a745; }
+.declined .result-item { border-left: 4px solid #dc3545; }
+.errors .result-item { border-left: 4px solid #ffc107; }

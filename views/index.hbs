@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Martlet CHK</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body { 
+            background-color: #0d1117; 
+            color: #ffffff; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        }
+        .card { 
+            background-color: #161b22; 
+            border-color: #30363d; 
+            color: #ffffff; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3); 
+            border-radius: 8px; 
+        }
+        .card-header { 
+            background-color: #21262d; 
+            border-color: #30363d; 
+            padding: 1rem; 
+            border-radius: 8px 8px 0 0; 
+        }
+        .form-control, .form-select { 
+            background-color: #21262d; 
+            border-color: #30363d; 
+            color: #ffffff; 
+            border-radius: 6px; 
+        }
+        .form-control:focus, .form-select:focus { 
+            background-color: #21262d; 
+            color: #ffffff; 
+            border-color: #58a6ff; 
+            box-shadow: 0 0 0 0.25rem rgba(88, 166, 255, 0.25); 
+        }
+        .btn-primary { 
+            background-color: #238636; 
+            border-color: #2ea043; 
+            color: #ffffff; 
+            border-radius: 6px; 
+        }
+        .btn-primary:hover { 
+            background-color: #2ea043; 
+            border-color: #238636; 
+        }
+        .btn-secondary { 
+            background-color: #30363d; 
+            border-color: #484f58; 
+            color: #ffffff; 
+            border-radius: 6px; 
+        }
+        .btn-outline-primary, .btn-outline-info, .btn-outline-danger, .btn-outline-dark { 
+            color: #ffffff; 
+            border-radius: 6px; 
+        }
+        .table { 
+            color: #ffffff; 
+        }
+        .table-striped>tbody>tr:nth-of-type(odd) { 
+            background-color: rgba(255, 255, 255, 0.05); 
+        }
+        .scrollable-table { 
+            max-height: 300px; 
+            overflow-y: auto; 
+            scrollbar-width: thin; 
+            scrollbar-color: #30363d #161b22; 
+        }
+        .scrollable-table::-webkit-scrollbar { 
+            width: 8px; 
+        }
+        .scrollable-table::-webkit-scrollbar-track { 
+            background: #161b22; 
+        }
+        .scrollable-table::-webkit-scrollbar-thumb { 
+            background-color: #30363d; 
+            border-radius: 4px; 
+        }
+        .nav-tabs .nav-link { 
+            color: #8b949e; 
+            border-radius: 6px 6px 0 0; 
+        }
+        .nav-tabs .nav-link.active { 
+            background-color: #161b22; 
+            color: #58a6ff; 
+            border-color: #30363d #30363d #161b22; 
+        }
+        .bg-dark-stats { 
+            background-color: #21262d; 
+            color: #ffffff; 
+        }
+        .bg-success-stats { 
+            background-color: #238636; 
+            color: #ffffff; 
+        }
+        .bg-danger-stats { 
+            background-color: #da3633; 
+            color: #ffffff; 
+        }
+        .bg-warning-stats { 
+            background-color: #f0883e; 
+            color: #ffffff; 
+        }
+        .progress { 
+            background-color: #21262d; 
+            border-radius: 6px; 
+        }
+        .progress-bar { 
+            background-color: #58a6ff; 
+            border-radius: 6px; 
+        }
+        .label { 
+            color: #ffffff; 
+        }
+        .spinner-border { 
+            color: #58a6ff; 
+        }
+        .badge { 
+            font-size: 0.875em; 
+            border-radius: 4px; 
+        }
+        .result-card { 
+            background-color: #21262d; 
+            border: 1px solid #30363d; 
+            border-radius: 6px; 
+            padding: 1rem; 
+            margin-bottom: 1rem; 
+        }
+        .result-card.approved { 
+            border-left: 4px solid #238636; 
+        }
+        .result-card.declined { 
+            border-left: 4px solid #da3633; 
+        }
+        .result-card.error { 
+            border-left: 4px solid #f0883e; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-3">
+        <div class="row">
+            <!-- Panel de Control -->
+            <div class="col-lg-4">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Panel de Control</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="checkForm">
+                            <!-- Modo de operación -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Modo de Operación</label>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <input type="radio" class="btn-check" name="opMode" id="mode1" value="1" checked>
+                                    <label class="btn btn-outline-primary" for="mode1">Normal</label>
+
+                                    <input type="radio" class="btn-check" name="opMode" id="mode2" value="2">
+                                    <label class="btn btn-outline-info" for="mode2">Medio</label>
+
+                                    <input type="radio" class="btn-check" name="opMode" id="mode3" value="3">
+                                    <label class="btn btn-outline-danger" for="mode3">Diablo</label>
+
+                                    <input type="radio" class="btn-check" name="opMode" id="mode4" value="4">
+                                    <label class="btn btn-outline-light" for="mode4">Flash</label>
+                                </div>
+                            </div>
+
+                            <!-- Cookies -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Cookie 1 (Requerida)</label>
+                                <input type="text" class="form-control" id="cookie1" placeholder="Ingrese cookie 1">
+                            </div>
+
+                            <div class="mb-3 cookie-field" data-min-mode="2">
+                                <label class="form-label fw-bold">Cookie 2 (Modo Medio+)</label>
+                                <input type="text" class="form-control" id="cookie2" placeholder="Ingrese cookie 2">
+                            </div>
+
+                            <div class="mb-3 cookie-field" data-min-mode="3">
+                                <label class="form-label fw-bold">Cookie 3 (Modo Diablo/Flash)</label>
+                                <input type="text" class="form-control" id="cookie3" placeholder="Ingrese cookie 3">
+                            </div>
+
+                            <div class="mb-3 cookie-field" data-min-mode="3">
+                                <label class="form-label fw-bold">Cookie 4 (Modo Diablo/Flash)</label>
+                                <input type="text" class="form-control" id="cookie4" placeholder="Ingrese cookie 4">
+                            </div>
+
+                            <!-- Tarjetas -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Tarjetas (1 por línea)</label>
+                                <textarea class="form-control" id="cardList" rows="5" placeholder="Ingrese tarjetas, una por línea"></textarea>
+                            </div>
+
+                            <!-- Botones -->
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary" id="checkBtn">
+                                    <i class="bi bi-credit-card"></i> Verificar Tarjetas
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="clearBtn">
+                                    <i class="bi bi-trash"></i> Limpiar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultados -->
+            <div class="col-lg-8">
+                <!-- Estadísticas -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Estadísticas</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6 col-md-3">
+                                <div class="card bg-dark-stats mb-2">
+                                    <div class="card-body py-2">
+                                        <h5 class="card-title mb-0">Total</h5>
+                                        <p class="display-6 mb-0" id="statsTotal">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="card bg-success-stats mb-2">
+                                    <div class="card-body py-2">
+                                        <h5 class="card-title mb-0">Aprovadas</h5>
+                                        <p class="display-6 mb-0" id="statsApproved">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="card bg-danger-stats mb-2">
+                                    <div class="card-body py-2">
+                                        <h5 class="card-title mb-0">Reprovadas</h5>
+                                        <p class="display-6 mb-0" id="statsDenied">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="card bg-warning-stats mb-2">
+                                    <div class="card-body py-2">
+                                        <h5 class="card-title mb-0">Errores</h5>
+                                        <p class="display-6 mb-0" id="statsErrors">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estado de proceso -->
+                <div class="card mb-3" id="processingCard" style="display: none;">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="spinner-border text-primary me-3" role="status"></div>
+                            <div class="flex-grow-1">
+                                <h5 class="mb-1">Verificando tarjetas</h5>
+                                <div class="progress" style="height: 5px;">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                         id="processProgress" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs para resultados -->
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" id="resultsTabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#approved">
+                                    <i class="bi bi-check-circle text-success"></i> Aprovadas
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#declined">
+                                    <i class="bi bi-x-circle text-danger"></i> Reprovadas
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#errors">
+                                    <i class="bi bi-exclamation-triangle text-warning"></i> Errores
+                                </a>
+                            </li>
+                        </ul>
+                        <!-- Botón para descargar tarjetas aprobadas -->
+                        <button type="button" class="btn btn-success btn-sm ms-auto" id="downloadApprovedBtn">
+                            <i class="bi bi-download"></i> Descargar Aprovadas
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <!-- Tarjetas Aprovadas -->
+                            <div class="tab-pane fade show active" id="approved">
+                                <div class="scrollable-table">
+                                    <div id="approvedResults"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Tarjetas Reprovadas -->
+                            <div class="tab-pane fade" id="declined">
+                                <div class="scrollable-table">
+                                    <div id="declinedResults"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Errores -->
+                            <div class="tab-pane fade" id="errors">
+                                <div class="scrollable-table">
+                                    <div id="errorsResults"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JavaScript y jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            let eventSource, currentSessionId;
+            
+            // Configurar cambio de modo y mostrar/ocultar campos
+            $('input[name="opMode"]').change(function() {
+                const mode = parseInt($(this).val());
+                $('.cookie-field').each(function() {
+                    $(this).toggle(mode >= parseInt($(this).data('min-mode')));
+                });
+            }).trigger('change');
+
+            // Limpiar formulario y resultados
+            $('#clearBtn').click(function() {
+                $('#cardList').val('');
+                clearResults();
+            });
+
+            function clearResults() {
+                $('#approvedResults, #declinedResults, #errorsResults').empty();
+                updateStats(0, 0, 0);
+                $('#processProgress').css('width', '0%');
+            }
+
+            function updateStats(approved, declined, errors) {
+                $('#statsTotal').text(approved + declined + errors);
+                $('#statsApproved').text(approved);
+                $('#statsDenied').text(declined);
+                $('#statsErrors').text(errors);
+            }
+
+            function setupEventSource() {
+                if (eventSource) eventSource.close();
+                
+                eventSource = new EventSource('/stream');
+                
+                eventSource.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        
+                        if (!currentSessionId || data.sessionId === currentSessionId) {
+                            if (data.type === 'result') {
+                                addResult(data.data);
+                                updateStats(data.stats.aprovadas, data.stats.reprovadas, data.stats.errors);
+                                if (data.progress) $('#processProgress').css('width', data.progress + '%');
+                                highlightTab(data.data.status);
+                            } else if (data.type === 'complete') {
+                                $('#processingCard').hide();
+                                updateStats(data.stats.aprovadas, data.stats.reprovadas, data.stats.errors);
+                            } else if (data.type === 'error') {
+                                alert('Error: ' + data.message);
+                                $('#processingCard').hide();
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Error al procesar evento SSE:', e);
+                    }
+                };
+                
+                eventSource.onerror = function() {
+                    setTimeout(setupEventSource, 5000);
+                };
+            }
+            
+            function addResult(result) {
+                const backupBadge = result.wasBackup ? '<span class="badge bg-warning ms-1">Respaldo</span>' : '';
+                const cardClass = result.status === 'aprovada' ? 'approved' : result.status === 'reprovada' ? 'declined' : 'error';
+                const card = `
+                    <div class="result-card ${cardClass}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">${result.card}</h6>
+                                <p class="mb-0">${result.message}</p>
+                            </div>
+                            <div>
+                                <small class="text-muted">Cookie ${result.cookieUsed} ${backupBadge}</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                if (result.status === 'aprovada') {
+                    $('#approvedResults').prepend(card);
+                } else if (result.status === 'reprovada') {
+                    $('#declinedResults').prepend(card);
+                } else {
+                    $('#errorsResults').prepend(card);
+                }
+            }
+            
+            function highlightTab(status) {
+                const tabMap = {
+                    'aprovada': '#resultsTabs a[href="#approved"]',
+                    'reprovada': '#resultsTabs a[href="#declined"]',
+                    'error': '#resultsTabs a[href="#errors"]',
+                    'cookie-error': '#resultsTabs a[href="#errors"]'
+                };
+                
+                const classMap = {
+                    'aprovada': 'text-success',
+                    'reprovada': 'text-danger',
+                    'error': 'text-warning',
+                    'cookie-error': 'text-warning'
+                };
+                
+                const tab = $(tabMap[status]);
+                if (!$(`#${status === 'aprovada' ? 'approved' : status === 'reprovada' ? 'declined' : 'errors'}`).hasClass('show')) {
+                    tab.addClass(`${classMap[status]} fw-bold`);
+                }
+            }
+            
+            $('#resultsTabs a').on('shown.bs.tab', function() {
+                $(this).removeClass('text-success text-danger text-warning fw-bold');
+            });
+
+            // Descargar tarjetas aprobadas
+            $('#downloadApprovedBtn').click(function() {
+                const approvedCards = $('#approvedResults .result-card').map(function() {
+                    return $(this).find('h6').text();
+                }).get().join('\n');
+
+                if (!approvedCards) return alert('No hay tarjetas aprobadas para descargar');
+
+                const blob = new Blob([approvedCards], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'tarjetas_aprobadas.txt';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+            $('#checkForm').submit(function(e) {
+                e.preventDefault();
+                
+                const cards = $('#cardList').val().trim().split('\n').filter(card => card.trim());
+                if (!cards.length) return alert('Ingrese al menos una tarjeta para verificar');
+
+                const cookie1 = $('#cookie1').val().trim();
+                if (!cookie1) return alert('La Cookie 1 es obligatoria');
+
+                const mode = parseInt($('input[name="opMode"]:checked').val());
+                
+                clearResults();
+                $('#processingCard').show();
+                
+                $.ajax({
+                    url: '/check',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        cards: cards,
+                        cookie1: cookie1,
+                        cookie2: mode >= 2 ? $('#cookie2').val().trim() : '',
+                        cookie3: mode >= 3 ? $('#cookie3').val().trim() : '',
+                        cookie4: mode >= 3 ? $('#cookie4').val().trim() : '',
+                        mode: mode
+                    }),
+                    success: function(response) {
+                        currentSessionId = response.sessionId;
+                    },
+                    error: function(xhr) {
+                        alert('Error: ' + (xhr.responseJSON?.error || 'No se pudo procesar la solicitud'));
+                        $('#processingCard').hide();
+                    }
+                });
+            });
+            
+            setupEventSource();
+        });
+    </script>
+</body>
+</html>
