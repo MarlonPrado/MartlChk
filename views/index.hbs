@@ -22,7 +22,7 @@
                             <div class="mb-3">
                                 <label class="form-label fw-bold text-light">Modo de Operación</label>
                                 <div class="d-flex flex-wrap gap-2">
-                                    <input type="radio" class="btn-check" name="opMode" id="mode1" value="1" checked>
+                                    <input type="radio" class="btn-check" name="opMode" id="mode1" value="1" >
                                     <label class="btn btn-outline-primary" for="mode1">Normal</label>
 
                                     <input type="radio" class="btn-check" name="opMode" id="mode2" value="2">
@@ -490,6 +490,72 @@
             
             setupEventSource();
         });
+
+// Función para manejar el estado de los campos de cookies según el modo
+function updateCookieFields() {
+    const mode = parseInt($('input[name="opMode"]:checked').val());
+    
+    // Habilitar/deshabilitar campos según el modo
+    $('#cookie1').prop('disabled', false)
+                .removeClass('disabled-field');
+    
+    if (mode === 1) { // Modo Normal
+        $('#cookie2, #cookie3, #cookie4').prop('disabled', true)
+                                        .addClass('disabled-field')
+                                        .val('')
+                                        .attr('placeholder', 'No requerido en este modo');
+    } 
+    else if (mode === 2) { // Modo Medio
+        $('#cookie2').prop('disabled', false)
+                    .removeClass('disabled-field')
+                    .attr('placeholder', 'Ingrese cookie 2');
+        
+        $('#cookie3, #cookie4').prop('disabled', true)
+                              .addClass('disabled-field')
+                              .val('')
+                              .attr('placeholder', 'No requerido en modo Medio');
+    } 
+    else { // Modos Diablo/Flash (3 y 4)
+        $('#cookie2, #cookie3, #cookie4').prop('disabled', false)
+                                         .removeClass('disabled-field')
+                                         .attr('placeholder', function() {
+                                             return `Ingrese ${$(this).attr('id')}`;
+                                         });
+    }
+}
+
+// Añadir estos estilos al section <style> existente
+const style = `
+    .disabled-field {
+        background-color: #2a2a2a !important;
+        color: #6c757d !important;
+        border-color: #444 !important;
+        cursor: not-allowed;
+    }
+    .disabled-field::placeholder {
+        color: #6c757d !important;
+        opacity: 0.7;
+    }
+`;
+$('head').append(`<style>${style}</style>`);
+
+// Configurar eventos
+$(document).ready(function() {
+    // Seleccionar modo Normal por defecto
+    $('#mode1').prop('checked', true).trigger('change');
+    
+    // Actualizar campos al cambiar modo
+    $('input[name="opMode"]').change(function() {
+        updateCookieFields();
+        $('.cookie-field').each(function() {
+            $(this).toggle(parseInt($(this).data('min-mode')) <= parseInt($('input[name="opMode"]:checked').val()));
+        });
+    });
+    
+    // Inicializar
+    updateCookieFields();
+});
+
     </script>
     
     <style>
