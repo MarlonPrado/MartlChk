@@ -19,10 +19,10 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 // Obtener cooldown según el modo
 const getCooldownTime = (mode) => {
     switch (mode) {
-        case 1: return 1000; // Modo normal: 1 segundo
-        case 2: return 1800; // Modo medio: 1.8 segundos
-        case 3: case 4: return 2500; // Modo masivo: 2.5 segundos
-        default: return 1000;
+        case 1: return 4000; // Modo normal: 1 segundo
+        case 2: return 4000; // Modo medio: 1.8 segundos
+        case 3: case 4: return 4000; // Modo masivo: 2.5 segundos
+        default: return 4000;
     }
 };
 
