@@ -6,6 +6,80 @@
     <title>Martlet CHK</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        /* Fondos responsivos */
+        body {
+            background-image: url('https://wallpapercave.com/wp/wp7651024.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        @media (max-width: 768px) {?q=80&w=2232&auto=format&fit=crop
+            body {
+                background-image: url('https://images.unsplash.com/photo-1639762681297-068b47a9e5aa?q=80&w=2232&auto=format&fit=crop');
+            }
+        }
+
+        .card {
+            background-color: rgba(0, 0, 0, 0.85) !important;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .disabled-field {
+            background-color: #2a2a2a !important;
+            color: #6c757d !important;
+            border-color: #444 !important;
+            cursor: not-allowed;
+        }
+
+        .disabled-field::placeholder {
+            color: #6c757d !important;
+            opacity: 0.7;
+        }
+
+        .pulsate {
+            animation: pulsate 1.5s infinite;
+        }
+
+        @keyframes pulsate {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Mejoras de diseño */
+        .form-control, .form-control:focus {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border-color: #495057;
+        }
+
+        .nav-tabs .nav-link {
+            color: #6c757d;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: white;
+            font-weight: bold;
+        }
+
+        .progress {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Efecto hover para botones */
+        .btn-outline-primary:hover, .btn-outline-info:hover, 
+        .btn-outline-danger:hover, .btn-outline-light:hover {
+            color: white !important;
+        }
+    </style>
 </head>
 <body class="bg-dark text-light">
     <div class="container-fluid py-3">
@@ -22,7 +96,7 @@
                             <div class="mb-3">
                                 <label class="form-label fw-bold text-light">Modo de Operación</label>
                                 <div class="d-flex flex-wrap gap-2">
-                                    <input type="radio" class="btn-check" name="opMode" id="mode1" value="1" >
+                                    <input type="radio" class="btn-check" name="opMode" id="mode1" value="1" checked>
                                     <label class="btn btn-outline-primary" for="mode1">Normal</label>
 
                                     <input type="radio" class="btn-check" name="opMode" id="mode2" value="2">
@@ -31,36 +105,36 @@
                                     <input type="radio" class="btn-check" name="opMode" id="mode3" value="3">
                                     <label class="btn btn-outline-danger" for="mode3">Diablo</label>
 
-                                    <input type="radio" class="btn-check" name="opMode" id="mode4" value="4">
-                                    <label class="btn btn-outline-light" for="mode4">Flash</label>
+                                    <input type="radio" class="btn-check" name="opMode" id="mode4" value="4" disabled>
+                                    <label class="btn btn-outline-light" for="mode4">No olvida cambiar de modo POR FAVOR</label>
                                 </div>
                             </div>
 
                             <!-- Cookies -->
                             <div class="mb-3">
                                 <label class="form-label fw-bold text-light">Cookie 1 (Requerida)</label>
-                                <input type="text" class="form-control bg-dark text-light border-secondary" id="cookie1" placeholder="Ingrese cookie 1">
+                                <input type="text" class="form-control bg-dark text-light border-secondary" id="cookie1" placeholder="Ingrese cookie 1" required>
                             </div>
 
-                            <div class="mb-3 cookie-field" data-min-mode="2">
+                            <div class="mb-3 cookie-field" data-min-mode="2" style="display: none;">
                                 <label class="form-label fw-bold text-light">Cookie 2 (Modo Medio+)</label>
-                                <input type="text" class="form-control bg-dark text-light border-secondary" id="cookie2" placeholder="Ingrese cookie 2">
+                                <input type="text" class="form-control bg-dark text-light border-secondary disabled-field" id="cookie2" placeholder="No requerido en este modo" disabled>
                             </div>
 
-                            <div class="mb-3 cookie-field" data-min-mode="3">
+                            <div class="mb-3 cookie-field" data-min-mode="3" style="display: none;">
                                 <label class="form-label fw-bold text-light">Cookie 3 (Modo Diablo/Flash)</label>
-                                <input type="text" class="form-control bg-dark text-light border-secondary" id="cookie3" placeholder="Ingrese cookie 3">
+                                <input type="text" class="form-control bg-dark text-light border-secondary disabled-field" id="cookie3" placeholder="No requerido en este modo" disabled>
                             </div>
 
-                            <div class="mb-3 cookie-field" data-min-mode="3">
+                            <div class="mb-3 cookie-field" data-min-mode="3" style="display: none;">
                                 <label class="form-label fw-bold text-light">Cookie 4 (Modo Diablo/Flash)</label>
-                                <input type="text" class="form-control bg-dark text-light border-secondary" id="cookie4" placeholder="Ingrese cookie 4">
+                                <input type="text" class="form-control bg-dark text-light border-secondary disabled-field" id="cookie4" placeholder="No requerido en este modo" disabled>
                             </div>
 
                             <!-- Tarjetas -->
                             <div class="mb-3">
                                 <label class="form-label fw-bold text-light">Tarjetas (1 por línea)</label>
-                                <textarea class="form-control bg-dark text-light border-secondary" id="cardList" rows="5" placeholder="Ingrese tarjetas, una por línea"></textarea>
+                                <textarea class="form-control bg-dark text-light border-secondary" id="cardList" rows="5" placeholder="Ingrese tarjetas, una por línea" required></textarea>
                                 <div class="form-text text-light" id="cardCount">0 tarjetas ingresadas (0 únicas)</div>
                             </div>
 
@@ -207,6 +281,35 @@
         </div>
     </div>
 
+    <footer>
+        <p>Hecho por tanetus - por fans para fans- ola yonkis</p>
+    </footer>
+
+    <!-- Efectos de sonido (todos ocultos) -->
+    <audio id="startSound" preload="auto">
+        <source src="./SSLogon.wav" type="audio/mpeg">
+    </audio>
+    
+    <audio id="approvedSound" preload="auto">
+        <source src="./live.wav" type="audio/mpeg">
+    </audio>
+    
+    <audio id="cookieErrorSound" preload="auto">
+        <source src="./SSDing.wav" type="audio/mpeg">
+    </audio>
+    
+    <audio id="clearSound" preload="auto">
+        <source src="./SSRecycle.wav" type="audio/mpeg">
+    </audio>
+    
+    <audio id="modeChangeSound" preload="auto">
+        <source src="./SSBlip2.wav" type="audio/mpeg">
+    </audio>
+    
+    <audio id="stopSound" preload="auto">
+        <source src="./SSLogoff.wav" type="audio/mpeg">
+    </audio>
+
     <!-- Bootstrap JavaScript y jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -215,12 +318,44 @@
         $(document).ready(function() {
             let eventSource, currentSessionId;
             let cookieErrorCount = 0;
+            let resultsCache = {
+                approved: [],
+                declined: [],
+                errors: []
+            };
+            
+            // Función para reproducir sonidos
+            function playSound(soundId) {
+                try {
+                    const sound = document.getElementById(soundId);
+                    sound.currentTime = 0; // Reiniciar el audio
+                    sound.play().catch(e => console.log('Error al reproducir sonido:', e));
+                } catch (e) {
+                    console.error('Error con el sonido:', e);
+                }
+            }
             
             // Configurar cambio de modo y mostrar/ocultar campos
             $('input[name="opMode"]').change(function() {
+                playSound('modeChangeSound');
                 const mode = parseInt($(this).val());
                 $('.cookie-field').each(function() {
-                    $(this).toggle(mode >= parseInt($(this).data('min-mode')));
+                    const minMode = parseInt($(this).data('min-mode'));
+                    const shouldShow = mode >= minMode;
+                    $(this).toggle(shouldShow);
+                    
+                    // Habilitar/deshabilitar campos según el modo
+                    const input = $(this).find('input');
+                    if (shouldShow) {
+                        input.prop('disabled', false)
+                            .removeClass('disabled-field')
+                            .attr('placeholder', $(this).find('label').text().replace(' (', ''));
+                    } else {
+                        input.prop('disabled', true)
+                            .addClass('disabled-field')
+                            .val('')
+                            .attr('placeholder', 'No requerido en este modo');
+                    }
                 });
             }).trigger('change');
             
@@ -233,6 +368,7 @@
 
             // Limpiar formulario y resultados
             $('#clearBtn').click(function() {
+                playSound('clearSound');
                 $('#cardList').val('');
                 $('#cardCount').text('0 tarjetas ingresadas (0 únicas)');
                 clearResults();
@@ -245,6 +381,13 @@
                 cookieErrorCount = 0;
                 $('#cookieErrorsCount').text('');
                 $('#cookieErrorAlert').hide();
+                
+                // Limpiar cache
+                resultsCache = {
+                    approved: [],
+                    declined: [],
+                    errors: []
+                };
             }
 
             function updateStats(approved, declined, errors, cookieErrors) {
@@ -280,6 +423,11 @@
                                 );
                                 if (data.progress) $('#processProgress').css('width', data.progress + '%');
                                 highlightTab(data.data.status);
+                                
+                                // Reproducir sonido si es aprovada
+                                if (data.data.status === 'aprovada') {
+                                    playSound('approvedSound');
+                                }
                             } else if (data.type === 'complete') {
                                 $('#processingCard').hide();
                                 updateStats(
@@ -289,15 +437,19 @@
                                     data.stats.cookieErrors || 0
                                 );
                                 alert('¡Procesamiento completado!');
+                                playSound('stopSound');
                             } else if (data.type === 'error') {
                                 alert('Error: ' + data.message);
                                 $('#processingCard').hide();
                             } else if (data.type === 'cookie-error') {
+                                playSound('cookieErrorSound');
                                 cookieErrorCount++;
                                 showCookieErrorAlert(data.data);
                             } else if (data.type === 'stopped') {
+                                
                                 $('#processingCard').hide();
                                 alert('Procesamiento detenido por el usuario');
+                                playSound('stopSound');
                             }
                         }
                     } catch (e) {
@@ -352,13 +504,30 @@
                     </div>
                 `;
                 
+                // Almacenar en caché
                 if (result.status === 'aprovada') {
+                    resultsCache.approved.unshift(card);
                     $('#approvedResults').prepend(card);
                 } else if (result.status === 'reprovada') {
+                    resultsCache.declined.unshift(card);
                     $('#declinedResults').prepend(card);
                 } else {
+                    resultsCache.errors.unshift(card);
                     $('#errorsResults').prepend(card);
                 }
+            }
+            
+            // Función para renderizar resultados desde caché
+            function renderCachedResults() {
+                $('#approvedResults').html(resultsCache.approved.join(''));
+                $('#declinedResults').html(resultsCache.declined.join(''));
+                $('#errorsResults').html(resultsCache.errors.join(''));
+                
+                // Actualizar estadísticas basadas en el caché
+                const approvedCount = resultsCache.approved.length;
+                const declinedCount = resultsCache.declined.length;
+                const errorsCount = resultsCache.errors.length;
+                updateStats(approvedCount, declinedCount, errorsCount, 0);
             }
             
             function highlightTab(status) {
@@ -367,13 +536,6 @@
                     'reprovada': '#resultsTabs a[href="#declined"]',
                     'error': '#resultsTabs a[href="#errors"]',
                     'cookie-error': '#resultsTabs a[href="#errors"]'
-                };
-                
-                const classMap = {
-                    'aprovada': 'text-success',
-                    'reprovada': 'text-danger',
-                    'error': 'text-warning',
-                    'cookie-error': 'text-warning'
                 };
                 
                 const tab = $(tabMap[status]);
@@ -413,6 +575,7 @@
             // Detener procesamiento
             $('#stopBtn').click(function() {
                 if (!currentSessionId) return;
+                playSound('stopSound');
                 
                 $.ajax({
                     url: '/stop',
@@ -430,6 +593,7 @@
 
             $('#checkForm').submit(function(e) {
                 e.preventDefault();
+                playSound('startSound');
                 
                 const cards = $('#cardList').val().trim().split('\n').filter(card => card.trim());
                 if (!cards.length) {
@@ -462,7 +626,7 @@
                     }
                 }
                 
-                clearResults();
+                // No limpiar resultados, solo mostrar la barra de progreso
                 $('#processingCard').show();
                 
                 $.ajax({
@@ -488,85 +652,10 @@
                 });
             });
             
+            // Renderizar resultados almacenados al cargar la página
+            renderCachedResults();
             setupEventSource();
         });
-
-// Función para manejar el estado de los campos de cookies según el modo
-function updateCookieFields() {
-    const mode = parseInt($('input[name="opMode"]:checked').val());
-    
-    // Habilitar/deshabilitar campos según el modo
-    $('#cookie1').prop('disabled', false)
-                .removeClass('disabled-field');
-    
-    if (mode === 1) { // Modo Normal
-        $('#cookie2, #cookie3, #cookie4').prop('disabled', true)
-                                        .addClass('disabled-field')
-                                        .val('')
-                                        .attr('placeholder', 'No requerido en este modo');
-    } 
-    else if (mode === 2) { // Modo Medio
-        $('#cookie2').prop('disabled', false)
-                    .removeClass('disabled-field')
-                    .attr('placeholder', 'Ingrese cookie 2');
-        
-        $('#cookie3, #cookie4').prop('disabled', true)
-                              .addClass('disabled-field')
-                              .val('')
-                              .attr('placeholder', 'No requerido en modo Medio');
-    } 
-    else { // Modos Diablo/Flash (3 y 4)
-        $('#cookie2, #cookie3, #cookie4').prop('disabled', false)
-                                         .removeClass('disabled-field')
-                                         .attr('placeholder', function() {
-                                             return `Ingrese ${$(this).attr('id')}`;
-                                         });
-    }
-}
-
-// Añadir estos estilos al section <style> existente
-const style = `
-    .disabled-field {
-        background-color: #2a2a2a !important;
-        color: #6c757d !important;
-        border-color: #444 !important;
-        cursor: not-allowed;
-    }
-    .disabled-field::placeholder {
-        color: #6c757d !important;
-        opacity: 0.7;
-    }
-`;
-$('head').append(`<style>${style}</style>`);
-
-// Configurar eventos
-$(document).ready(function() {
-    // Seleccionar modo Normal por defecto
-    $('#mode1').prop('checked', true).trigger('change');
-    
-    // Actualizar campos al cambiar modo
-    $('input[name="opMode"]').change(function() {
-        updateCookieFields();
-        $('.cookie-field').each(function() {
-            $(this).toggle(parseInt($(this).data('min-mode')) <= parseInt($('input[name="opMode"]:checked').val()));
-        });
-    });
-    
-    // Inicializar
-    updateCookieFields();
-});
-
     </script>
-    
-    <style>
-        .pulsate {
-            animation: pulsate 1.5s infinite;
-        }
-        @keyframes pulsate {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-    </style>
 </body>
 </html>
