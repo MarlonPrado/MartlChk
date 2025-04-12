@@ -16,7 +16,7 @@
             min-height: 100vh;
         }
 
-        @media (max-width: 768px) {?q=80&w=2232&auto=format&fit=crop
+        @media (max-width: 768px) {
             body {
                 background-image: url('https://images.unsplash.com/photo-1639762681297-068b47a9e5aa?q=80&w=2232&auto=format&fit=crop');
             }
@@ -78,6 +78,41 @@
         .btn-outline-primary:hover, .btn-outline-info:hover, 
         .btn-outline-danger:hover, .btn-outline-light:hover {
             color: white !important;
+        }
+
+        /* Nuevos estilos para resultados */
+        .approved-card {
+            border-left: 4px solid #28a745 !important;
+            background-color: rgba(40, 167, 69, 0.1) !important;
+        }
+
+        .declined-card {
+            border-left: 4px solid #dc3545 !important;
+            background-color: rgba(220, 53, 69, 0.1) !important;
+        }
+
+        .error-card {
+            border-left: 4px solid #ffc107 !important;
+            background-color: rgba(255, 193, 7, 0.1) !important;
+        }
+
+        .approved-badge {
+            background-color: #28a745 !important;
+        }
+
+        .declined-badge {
+            background-color: #dc3545 !important;
+        }
+
+        .error-badge {
+            background-color: #ffc107 !important;
+            color: #212529 !important;
+        }
+
+        .copy-btn {
+            padding: 0.15rem 0.3rem;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
         }
     </style>
 </head>
@@ -162,7 +197,7 @@
                     <div class="card-body">
                         <div class="row text-center">
                             <div class="col-6 col-md-3">
-                                <div class="card bg-secondary text-white mb-2">
+                                <div class="card bg-dark text-white mb-2">
                                     <div class="card-body py-2">
                                         <h5 class="card-title mb-0">Total</h5>
                                         <p class="display-6 mb-0" id="statsTotal">0</p>
@@ -170,7 +205,7 @@
                                 </div>
                             </div>
                             <div class="col-6 col-md-3">
-                                <div class="card bg-success text-white mb-2">
+                                <div class="card bg-dark text-success mb-2">
                                     <div class="card-body py-2">
                                         <h5 class="card-title mb-0">Aprovadas</h5>
                                         <p class="display-6 mb-0" id="statsApproved">0</p>
@@ -178,7 +213,7 @@
                                 </div>
                             </div>
                             <div class="col-6 col-md-3">
-                                <div class="card bg-danger text-white mb-2">
+                                <div class="card bg-dark text-danger mb-2">
                                     <div class="card-body py-2">
                                         <h5 class="card-title mb-0">Reprovadas</h5>
                                         <p class="display-6 mb-0" id="statsDenied">0</p>
@@ -186,11 +221,11 @@
                                 </div>
                             </div>
                             <div class="col-6 col-md-3">
-                                <div class="card bg-warning text-dark mb-2">
+                                <div class="card bg-dark text-warning mb-2">
                                     <div class="card-body py-2">
                                         <h5 class="card-title mb-0">Errores</h5>
                                         <p class="display-6 mb-0" id="statsErrors">0</p>
-                                        <small id="cookieErrorsCount" class="text-dark"></small>
+                                        <small id="cookieErrorsCount" class="text-warning"></small>
                                     </div>
                                 </div>
                             </div>
@@ -473,23 +508,28 @@
                 const backupBadge = result.wasBackup ? 
                     '<span class="badge bg-warning ms-1">Respaldo</span>' : '';
                 
-                let statusBadge, bgClass;
+                let statusBadge, cardClass;
                 if (result.status === 'aprovada') {
-                    statusBadge = '<span class="badge bg-success">APROBADA</span>';
-                    bgClass = 'border-success';
+                    statusBadge = '<span class="badge approved-badge">APROBADA</span>';
+                    cardClass = 'approved-card';
                 } else if (result.status === 'reprovada') {
-                    statusBadge = '<span class="badge bg-danger">RECHAZADA</span>';
-                    bgClass = 'border-danger';
+                    statusBadge = '<span class="badge declined-badge">RECHAZADA</span>';
+                    cardClass = 'declined-card';
                 } else if (result.status === 'cookie-error') {
-                    statusBadge = '<span class="badge bg-warning">ERROR COOKIE</span>';
-                    bgClass = 'border-warning';
+                    statusBadge = '<span class="badge error-badge">ERROR COOKIE</span>';
+                    cardClass = 'error-card';
                 } else {
-                    statusBadge = '<span class="badge bg-warning">ERROR</span>';
-                    bgClass = 'border-warning';
+                    statusBadge = '<span class="badge error-badge">ERROR</span>';
+                    cardClass = 'error-card';
                 }
                 
+                // Crear botón de copiar
+                const copyBtn = `<button class="btn btn-sm btn-outline-light copy-btn" data-card="${result.card.replace(/"/g, '&quot;')}">
+                    <i class="bi bi-copy"></i> Copiar
+                </button>`;
+                
                 const card = `
-                    <div class="card bg-dark ${bgClass} mb-2">
+                    <div class="card bg-dark ${cardClass} mb-2">
                         <div class="card-body py-2">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h6 class="mb-0">${result.card}</h6>
@@ -497,6 +537,7 @@
                                     ${statusBadge}
                                     <span class="badge bg-secondary ms-1">Cookie ${result.cookieUsed}</span>
                                     ${backupBadge}
+                                    ${copyBtn}
                                 </div>
                             </div>
                             <p class="mb-0 text-light-emphasis small">${result.message}</p>
@@ -515,6 +556,17 @@
                     resultsCache.errors.unshift(card);
                     $('#errorsResults').prepend(card);
                 }
+                
+                // Configurar evento click para los botones de copiar
+                $('.copy-btn').off('click').on('click', function() {
+                    const cardNumber = $(this).data('card');
+                    navigator.clipboard.writeText(cardNumber).then(() => {
+                        $(this).html('<i class="bi bi-check"></i> Copiado');
+                        setTimeout(() => {
+                            $(this).html('<i class="bi bi-copy"></i> Copiar');
+                        }, 2000);
+                    });
+                });
             }
             
             // Función para renderizar resultados desde caché
@@ -528,6 +580,17 @@
                 const declinedCount = resultsCache.declined.length;
                 const errorsCount = resultsCache.errors.length;
                 updateStats(approvedCount, declinedCount, errorsCount, 0);
+                
+                // Configurar eventos click para los botones de copiar
+                $('.copy-btn').off('click').on('click', function() {
+                    const cardNumber = $(this).data('card');
+                    navigator.clipboard.writeText(cardNumber).then(() => {
+                        $(this).html('<i class="bi bi-check"></i> Copiado');
+                        setTimeout(() => {
+                            $(this).html('<i class="bi bi-copy"></i> Copiar');
+                        }, 2000);
+                    });
+                });
             }
             
             function highlightTab(status) {
