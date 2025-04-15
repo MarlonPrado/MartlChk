@@ -6,6 +6,7 @@
     <title>Martlet CHK</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
         /* Fondos responsivos */
         body {
@@ -20,6 +21,48 @@
             body {
                 background-image: url('https://images.unsplash.com/photo-1639762681297-068b47a9e5aa?q=80&w=2232&auto=format&fit=crop');
             }
+        }
+
+        /* Overlay inicial */
+        #modeSelectorOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: all 0.5s ease;
+        }
+
+        #modeSelectorOverlay h1 {
+            color: white;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .mode-selector-btn {
+            width: 200px;
+            height: 60px;
+            margin: 10px;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .mode-selector-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Contenido principal (inicialmente oculto) */
+        #mainContent {
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
 
         .card {
@@ -117,7 +160,24 @@
     </style>
 </head>
 <body class="bg-dark text-light">
-    <div class="container-fluid py-3">
+    <!-- Overlay de selección de modo -->
+    <div id="modeSelectorOverlay">
+        <h1 class="animate__animated animate__fadeIn">Selecciona tu modo de operación</h1>
+        <div class="d-flex flex-wrap justify-content-center animate__animated animate__fadeInUp">
+            <button class="btn btn-outline-primary mode-selector-btn" data-mode="1">
+                <i class="bi bi-1-circle"></i> Normal (1 Cookie)
+            </button>
+            <button class="btn btn-outline-info mode-selector-btn" data-mode="2">
+                <i class="bi bi-2-circle"></i> Medio (2 Cookies)
+            </button>
+            <button class="btn btn-outline-danger mode-selector-btn" data-mode="3">
+                <i class="bi bi-3-circle"></i> Extremo (4 Cookies)
+            </button>
+        </div>
+    </div>
+
+    <!-- Contenido principal (inicialmente oculto) -->
+    <div id="mainContent" class="container-fluid py-3">
         <div class="row">
             <!-- Panel de Control -->
             <div class="col-lg-4">
@@ -131,17 +191,14 @@
                             <div class="mb-3">
                                 <label class="form-label fw-bold text-light">Modo de Operación</label>
                                 <div class="d-flex flex-wrap gap-2">
-                                    <input type="radio" class="btn-check" name="opMode" id="mode1" value="1" checked>
+                                    <input type="radio" class="btn-check" name="opMode" id="mode1" value="1">
                                     <label class="btn btn-outline-primary" for="mode1">Normal</label>
 
                                     <input type="radio" class="btn-check" name="opMode" id="mode2" value="2">
                                     <label class="btn btn-outline-info" for="mode2">Medio</label>
 
                                     <input type="radio" class="btn-check" name="opMode" id="mode3" value="3">
-                                    <label class="btn btn-outline-danger" for="mode3">Diablo</label>
-
-                                    <input type="radio" class="btn-check" name="opMode" id="mode4" value="4" disabled>
-                                    <label class="btn btn-outline-light" for="mode4">No olvida cambiar de modo POR FAVOR</label>
+                                    <label class="btn btn-outline-danger" for="mode3">Extremo</label>
                                 </div>
                             </div>
 
@@ -153,17 +210,17 @@
 
                             <div class="mb-3 cookie-field" data-min-mode="2" style="display: none;">
                                 <label class="form-label fw-bold text-light">Cookie 2 (Modo Medio+)</label>
-                                <input type="text" class="form-control bg-dark text-light border-secondary disabled-field" id="cookie2" placeholder="No requerido en este modo" disabled>
+                                <input type="text" class="form-control bg-dark text-light border-secondary" id="cookie2" placeholder="Ingrese cookie 2">
                             </div>
 
                             <div class="mb-3 cookie-field" data-min-mode="3" style="display: none;">
-                                <label class="form-label fw-bold text-light">Cookie 3 (Modo Diablo/Flash)</label>
-                                <input type="text" class="form-control bg-dark text-light border-secondary disabled-field" id="cookie3" placeholder="No requerido en este modo" disabled>
+                                <label class="form-label fw-bold text-light">Cookie 3 (Modo Extremo)</label>
+                                <input type="text" class="form-control bg-dark text-light border-secondary" id="cookie3" placeholder="Ingrese cookie 3">
                             </div>
 
                             <div class="mb-3 cookie-field" data-min-mode="3" style="display: none;">
-                                <label class="form-label fw-bold text-light">Cookie 4 (Modo Diablo/Flash)</label>
-                                <input type="text" class="form-control bg-dark text-light border-secondary disabled-field" id="cookie4" placeholder="No requerido en este modo" disabled>
+                                <label class="form-label fw-bold text-light">Cookie 4 (Modo Extremo)</label>
+                                <input type="text" class="form-control bg-dark text-light border-secondary" id="cookie4" placeholder="Ingrese cookie 4">
                             </div>
 
                             <!-- Tarjetas -->
@@ -370,6 +427,24 @@
                 }
             }
             
+            // Manejar selección de modo desde el overlay
+            $('.mode-selector-btn').click(function() {
+                const mode = $(this).data('mode');
+                playSound('modeChangeSound');
+                
+                // Configurar el modo seleccionado
+                $(`#mode${mode}`).prop('checked', true).trigger('change');
+                
+                // Ocultar overlay con animación
+                $('#modeSelectorOverlay').animate({
+                    opacity: 0
+                }, 500, function() {
+                    $(this).hide();
+                    // Mostrar contenido principal con animación
+                    $('#mainContent').css('opacity', '1');
+                });
+            });
+            
             // Configurar cambio de modo y mostrar/ocultar campos
             $('input[name="opMode"]').change(function() {
                 playSound('modeChangeSound');
@@ -392,7 +467,7 @@
                             .attr('placeholder', 'No requerido en este modo');
                     }
                 });
-            }).trigger('change');
+            });
             
             // Conteo de tarjetas
             $('#cardList').on('input', function() {
@@ -680,11 +755,11 @@
                 
                 if (mode >= 3) {
                     if (!$('#cookie3').val().trim()) {
-                        alert('La Cookie 3 es requerida para el modo Diablo/Flash');
+                        alert('La Cookie 3 es requerida para el modo Extremo');
                         return;
                     }
                     if (!$('#cookie4').val().trim()) {
-                        alert('La Cookie 4 es requerida para el modo Diablo/Flash');
+                        alert('La Cookie 4 es requerida para el modo Extremo');
                         return;
                     }
                 }
