@@ -46,7 +46,7 @@ class CookieNode {
         
         const config = {
             method: 'get',
-            url: 'https://lunarcntr.xyz/api.php',
+            url: 'https://vantrexcenter.com/us.php',
             params: { lista: card, cookie: this.cookie },
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
