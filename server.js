@@ -89,28 +89,31 @@ class CookieNode {
 
     addCard(card) {
         this.queue.push(card);
+        // Solo inicia el procesamiento si NO está procesando ya
         if (!this.isProcessing) {
+            this.isProcessing = true; // <-- Mueve esto aquí
             this.startProcessing();
         }
     }
 
     async startProcessing() {
-        if (this.isProcessing || this.queue.length === 0) return;
-        
-        this.isProcessing = true;
-        
+        if (this.queue.length === 0) {
+            this.isProcessing = false;
+            return;
+        }
+
         while (this.queue.length > 0 && !this.stopped) {
             const card = this.queue.shift();
             const result = await this.processCard(card);
-            
+
             if (result && !this.stopped) {
                 this.results.push(result);
-                
+
                 // Notificar que hay un nuevo resultado disponible
                 if (this.onResultCallback) {
                     this.onResultCallback(result);
                 }
-                
+
                 // Aplicar cooldown solo si quedan tarjetas por procesar
                 if (this.queue.length > 0 && !this.stopped) {
                     console.log(`[NODO ${this.cookieIndex + 1}] ⏱️ Cooldown de ${this.cooldownTime}ms`);
@@ -118,7 +121,7 @@ class CookieNode {
                 }
             }
         }
-        
+
         this.isProcessing = false;
     }
 
