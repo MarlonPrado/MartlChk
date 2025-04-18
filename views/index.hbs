@@ -235,8 +235,11 @@
                                 <button type="submit" class="btn btn-success" id="checkBtn">
                                     <i class="bi bi-credit-card"></i> Verificar Tarjetas
                                 </button>
-                                <button type="button" class="btn btn-secondary" id="clearBtn">
-                                    <i class="bi bi-trash"></i> Limpiar
+                                <button type="button" class="btn btn-secondary" id="clearAllBtn">
+                                    <i class="bi bi-trash"></i> Limpiar Todo (Cookies y Tarjetas)
+                                </button>
+                                <button type="button" class="btn btn-warning" id="clearDeclinedBtn">
+                                    <i class="bi bi-eraser"></i> Limpiar Rechazadas y Errores
                                 </button>
                             </div>
                         </form>
@@ -298,9 +301,11 @@
                                 <div class="spinner-border text-primary me-3" role="status"></div>
                                 <div class="flex-grow-1">
                                     <h5 class="mb-1">Verificando tarjetas</h5>
-                                    <div class="progress" style="height: 5px;">
-                                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                                             id="processProgress" style="width: 0%"></div>
+                                    <div class="progress" style="height: 24px; background-color: rgba(255,255,255,0.15);">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-info text-white fw-bold"
+                                             id="processProgress" style="width: 0%; font-size: 1rem; letter-spacing: 1px;">
+                                            <span id="progressText"></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -484,6 +489,26 @@
                 clearResults();
             });
 
+            // Limpiar TODO (cookies, tarjetas y resultados)
+            $('#clearAllBtn').click(function() {
+                playSound('clearSound');
+                $('#cardList').val('');
+                $('#cardCount').text('0 tarjetas ingresadas (0 únicas)');
+                $('#cookie1, #cookie2, #cookie3, #cookie4').val('');
+                clearResults();
+            });
+
+            // Limpiar solo rechazadas y errores (jamás las aprobadas)
+            $('#clearDeclinedBtn').click(function() {
+                playSound('clearSound');
+                $('#declinedResults, #errorsResults').empty();
+                resultsCache.declined = [];
+                resultsCache.errors = [];
+                updateStats(resultsCache.approved.length, 0, 0, 0);
+                $('#cookieErrorsCount').text('');
+                $('#cookieErrorAlert').hide();
+            });
+
             function clearResults() {
                 $('#approvedResults, #declinedResults, #errorsResults').empty();
                 updateStats(0, 0, 0, 0);
@@ -531,7 +556,7 @@
                                     data.stats.errors,
                                     data.stats.cookieErrors || 0
                                 );
-                                if (data.progress) $('#processProgress').css('width', data.progress + '%');
+                                if (data.progress) setProgressBar(data.progress);
                                 highlightTab(data.data.status);
                                 
                                 // Reproducir sonido si es aprovada
@@ -794,6 +819,15 @@
             renderCachedResults();
             setupEventSource();
         });
+
+        // Actualizar barra de progreso con texto amigable
+        function setProgressBar(percent) {
+            $('#processProgress').css('width', percent + '%');
+            $('#progressText').text(percent + '%');
+            if (percent >= 100) {
+                $('#progressText').text('¡Completado!');
+            }
+        }
     </script>
 </body>
 </html>
