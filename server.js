@@ -19,10 +19,10 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 // Obtener cooldown según el modo
 const getCooldownTime = (mode) => {
     switch (mode) {
-        case 1: return 5000; // Modo normal: 1 segundo
-        case 2: return 5000; // Modo medio: 1.8 segundos
-        case 3: case 4: return 5000; // Modo masivo: 2.5 segundos
-        default: return 5000;
+        case 1: return 1875; // Modo normal: 1 segundo
+        case 2: return 1875; // Modo medio: 1.8 segundos
+        case 3: case 4: return 1875; // Modo masivo: 2.5 segundos
+        default: return 1875;
     }
 };
 
@@ -52,7 +52,7 @@ class CookieNode {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
                 'X-Requested-With': 'XMLHttpRequest'
             },
-            timeout: 45000// Timeout de 30 segundos
+            timeout: 28000// Timeout de 45 segundos
         };
         
         try {
